@@ -92,6 +92,10 @@ def eval_adv_test_whitebox(model, device, X_adv_data, X_data, Y_data):
             out = model(X)
             err_robust = (out.data.max(1)[1] != y.data).float().sum()
             robust_err_total += err_robust
+            print(
+                f'\r{1 - robust_err_total / (idx + 1):.2%} '
+                f'({idx + 1 - int(robust_err_total)} / {idx + 1})',
+                end='')
     if not valid:
         print('not valid adversarial image')
     else:
@@ -102,7 +106,7 @@ def main():
     # white-box attack
     # load model
     model = WideResNet().to(device)
-    model.load_state_dict(torch.load(args.model_path))
+    model.load_state_dict(torch.load(args.model_path, map_location=device))
 
     # load data
     X_adv_data = np.load(args.data_attak_path)
