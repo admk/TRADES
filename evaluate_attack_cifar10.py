@@ -42,12 +42,16 @@ kwargs = {'num_workers': 1, 'pin_memory': True} if use_cuda else {}
 def image_check(min_delta, max_delta, min_image_adv, max_image_adv):
     valid = 1.0
     if min_delta < - args.epsilon:
+        print(f'{min_delta} < -{args.epsilon}')
         valid -= 2.0
     elif max_delta > args.epsilon:
+        print(f'{max_delta} > {args.epsilon}')
         valid -= 2.0
     elif min_image_adv < 0.0:
+        print(f'{min_image_adv} < 0')
         valid -= 2.0
     elif max_image_adv > 1.0:
+        print(f'{max_image_adv} > 1')
         valid -= 2.0
 
     if valid > 0.0:
@@ -93,9 +97,8 @@ def eval_adv_test_whitebox(model, device, X_adv_data, X_data, Y_data):
             err_robust = (out.data.max(1)[1] != y.data).float().sum()
             robust_err_total += err_robust
             print(
-                f'\r{1 - robust_err_total / (idx + 1):.2%} '
-                f'({idx + 1 - int(robust_err_total)} / {idx + 1})',
-                end='')
+                f'{1 - robust_err_total / (idx + 1):.2%} '
+                f'({idx + 1 - int(robust_err_total)} / {idx + 1})')
     if not valid:
         print('not valid adversarial image')
     else:
